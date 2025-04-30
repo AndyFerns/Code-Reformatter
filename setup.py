@@ -9,7 +9,7 @@ setup(
     ],
     entry_points={
         'console_scripts': [
-            'formatcode=cli_tool:main'
+            'formatcode=cli_tool.main:run'
         ]
     },
     author='Andrew Fernandes',

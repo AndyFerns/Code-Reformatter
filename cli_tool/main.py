@@ -1,7 +1,7 @@
 import os
 import subprocess
-from handlers import python_handler, c_handler, cpp_handler, java_handler
-from formatters import txt_formatter, latex_formatter, docx_formatter
+from cli_tool.handlers import python_handler, c_handler, cpp_handler, java_handler
+from cli_tool.formatters import txt_formatter, latex_formatter, docx_formatter
 
 def get_user_input():
     print("Enter your details:")
