@@ -1,14 +1,27 @@
 import os
+import json
 import subprocess
 from cli_tool.handlers import python_handler, c_handler, cpp_handler, java_handler
 from cli_tool.formatters import txt_formatter, latex_formatter, docx_formatter
 
+CONFIG_PATH = os.path.join(os.path.dirname(__file__), 'config.json')
+
 def get_user_input():
-    print("Enter your details:")
-    name = input("Name: ")
-    class_name = input("Class: ")
-    roll_number = input("Roll Number: ")
-    experiment_number = input("Experiment Number: ")
+    # Load user metadata from config.json
+    try:
+        with open(CONFIG_PATH, 'r') as f:
+            metadata = json.load(f)
+            # metadata = {
+            #     "name": name,
+            #     "class": class_name,
+            #     "roll_number": roll_number,
+            #     "experiment_number": experiment_number
+            # }
+            metadata["experiment_number"] = input("Experiment number: ")
+            
+    except FileNotFoundError:
+        print(f"[ERROR] config.json not found at {CONFIG_PATH}")
+        return None, None, None, None
     
     language = input("Programming Language (Python/C/C++/Java): ").strip()
     print("Enter your code (end with a single line containing only 'END'):")
@@ -22,17 +35,12 @@ def get_user_input():
 
     output_format = input("Output format (txt/latex/docx): ").strip()
 
-    metadata = {
-        "name": name,
-        "class": class_name,
-        "roll_number": roll_number,
-        "experiment_number": experiment_number
-    }
     return language, code, metadata, output_format
 
 def run():
     language, code, metadata, output_format = get_user_input()
 
+    #Code Language support
     if language.lower() == "python":
         output = python_handler.execute(code)
     elif language.lower() == "c":
@@ -44,7 +52,8 @@ def run():
     else:
         print("Unsupported language")
         return
-
+    
+    # Code Output Formatters
     if output_format == "txt":
         txt_formatter.generate(code, output, metadata)
     elif output_format == "latex":
