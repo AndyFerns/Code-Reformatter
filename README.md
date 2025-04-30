@@ -105,4 +105,4 @@ Contributions are welcome! If you'd like to contribute, please:
 
 If you have any questions or suggestions, feel free to reach out:
 
-- Email: write2andrew.important@gmail.com
+- Email: <write2andrew.important@gmail.com>
