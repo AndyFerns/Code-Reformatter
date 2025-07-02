@@ -7,22 +7,14 @@ from cli_tool.formatters import txt_formatter, latex_formatter, docx_formatter
 CONFIG_PATH = os.path.join(os.path.dirname(__file__), 'config.json')
 
 def get_user_input():
-    # Load user metadata from config.json
     try:
         with open(CONFIG_PATH, 'r') as f:
             metadata = json.load(f)
-            # metadata = {
-            #     "name": name,
-            #     "class": class_name,
-            #     "roll_number": roll_number,
-            #     "experiment_number": experiment_number
-            # }
             metadata["experiment_number"] = input("Experiment number: ")
-            
     except FileNotFoundError:
         print(f"[ERROR] config.json not found at {CONFIG_PATH}")
         return None, None, None, None
-    
+
     language = input("Programming Language (Python/C/C++/Java): ").strip()
     print("Enter your code (end with a single line containing only 'END'):")
     code_lines = []
@@ -35,33 +27,45 @@ def get_user_input():
 
     output_format = input("Output format (txt/latex/docx): ").strip()
 
+    # Return only if all required fields are filled
+    if not (language and code and output_format and metadata):
+        return None, None, None, None
+
     return language, code, metadata, output_format
+
 
 def run():
     language, code, metadata, output_format = get_user_input()
 
-    #Code Language support
-    if language.lower() == "python":
+    if not all([language, code, metadata, output_format]):
+        print("[ERROR] Missing input. Exiting.")
+        return
+
+    # Code Language support
+    lang = language.lower() # type: ignore
+    if lang == "python":
         output = python_handler.execute(code)
-    elif language.lower() == "c":
+    elif lang == "c":
         output = c_handler.execute(code)
-    elif language.lower() == "c++":
+    elif lang == "c++":
         output = cpp_handler.execute(code)
-    elif language.lower() == "java":
+    elif lang == "java":
         output = java_handler.execute(code)
     else:
         print("Unsupported language")
         return
-    
+
     # Code Output Formatters
-    if output_format == "txt":
+    fmt = output_format.lower() # type: ignore
+    if fmt == "txt":
         txt_formatter.generate(code, output, metadata)
-    elif output_format == "latex":
-        latex_formatter.generate(code, output, metadata)
-    elif output_format == "docx":
+    elif fmt == "latex":
+        latex_formatter.generate(code, output, metadata) # type: ignore
+    elif fmt == "docx":
         docx_formatter.generate(code, output, metadata)
     else:
         print("Unsupported format")
+
 
 if __name__ == '__main__':
     run()
