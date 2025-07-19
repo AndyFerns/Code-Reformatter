@@ -1,0 +1,28 @@
+[build-system]
+requires = [
+    "setuptools>=61", 
+    "wheel"
+]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "code_formatter_cli"
+version = "1.1.0"
+description = "CLI tool to execute and format code output in txt, docx, or LaTeX formats"
+authors = [
+    { name = "Andrew Fernandes" }
+]
+requires-python = ">=3.6"
+dependencies = [
+    "python-docx"
+]
+readme = "README.md"
+keywords = ["cli", "code", "formatter", "python", "latex", "docx", "c", "java"]
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "Intended Audience :: Developers",
+    "Topic :: Utilities"
+]
+
+[project.scripts]
+formatcode = "cli_tool.main:main"
