@@ -3,7 +3,9 @@ import json
 import subprocess
 from cli_tool.handlers import python_handler, c_handler, cpp_handler, java_handler
 from cli_tool.formatters import txt_formatter, latex_formatter, docx_formatter
+from cli_tool.arg_cli import get_cli_args 
 
+# Path to default config
 CONFIG_PATH = os.path.join(os.path.dirname(__file__), 'config.json')
 
 def get_user_input():
