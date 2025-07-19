@@ -10,16 +10,21 @@ Output formats include: **DOCX**, **LaTeX** and **Plain Text**. (In the order of
 ## ✨ Features
 
 - ✅ Supports **Python**, **C**, **C++**, and **Java** code
-- 📄 Formats the code and its output into:
-  - Microsoft Word (.docx)
-  - Plain text (.txt)
-  - LaTeX (.tex)
 - 🧠 Custom metadata:
   - Student Name
   - Class
   - Roll Number
   - Experiment Number
-
+- 📄 Formats the code and its output into:
+  - Microsoft Word (.docx)
+  - Plain text (.txt)
+  - LaTeX (.tex)
+- ⚙️ CLI options for:
+  - Custom config path
+  - Interactive mode
+  - Version display
+  - Script-based automation
+  
 ---
 
 ## 📦 Installation
@@ -27,8 +32,8 @@ Output formats include: **DOCX**, **LaTeX** and **Plain Text**. (In the order of
 1. Clone the git repository
 
     ```bash
-    git clone https://github.com/yourusername/code-formatter-cli.git
-    cd code-formatter-cli
+    git clone https://github.com/AndyFerns/Code-Reformatter
+    cd Code-Reformatter
     pip install .
     ```
 
@@ -42,31 +47,37 @@ Output formats include: **DOCX**, **LaTeX** and **Plain Text**. (In the order of
 
 ## 🚀 Usage
 
-```bash
-    formatcode \
-    --file sample.py \
-    --lang python \
-    --format docx \
-    --name "Alice Doe" \
-    --class_ "Your class name" \
-    --roll "Your Roll Number" \
-    --expno "Experiment Number"
+```console
+formatcode 
+[-h] 
+[--input INPUT] 
+[--language LANGUAGE] 
+[--code-file CODE_FILE] 
+[--format FORMAT] 
+[--interactive] 
+[--version]
 ```
 
---file: Path to the source code file
+--code-file: Path to the source code file
 
---lang: Programming language (python, c, cpp, java)
+--language: Programming language (python, c, cpp, java)
 
 --format: Output format (docx, txt, latex)
 
---name, --class_, --roll, --expno: Student details
+--interactive: Launch an interactive session (prompts for code, language, and format)
+
+--input: Path to custom metadata JSON config
+
+--version: Display version info
 
 ---
 
 ## Output Examples
 
 ```docx
-Name: Alice Doe              Class: SE-A            Roll No: 42
+                                        Name: Alice Doe              
+                                        Class: SE-A            
+                                        Roll No: 42
 
                 EXPERIMENT 03
 
