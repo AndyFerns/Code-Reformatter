@@ -8,15 +8,56 @@ from cli_tool.arg_cli import get_cli_args
 # Path to default config
 CONFIG_PATH = os.path.join(os.path.dirname(__file__), 'config.json')
 
-def get_user_input():
+def load_metadata(path):
     try:
-        with open(CONFIG_PATH, 'r') as f:
-            metadata = json.load(f)
-            metadata["experiment_number"] = input("Experiment number: ")
+        with open(path, 'r') as f:
+            return json.load(f)
     except FileNotFoundError:
-        print(f"[ERROR] config.json not found at {CONFIG_PATH}")
-        return None, None, None, None
+        print(f"[ERROR] Metadata file not found: {path}")
+        return None
+    except json.JSONDecodeError:
+        print(f"[ERROR] Invalid JSON format in: {path}")
+        return None
 
+def read_code_from_file(file_path):
+    try:
+        with open(file_path, 'r') as f:
+            return f.read()
+    except FileNotFoundError:
+        print(f"[ERROR] Code file not found: {file_path}")
+        return None
+
+def execute_code(language, code):
+    lang = language.lower()
+    if lang == "python":
+        return python_handler.execute(code)
+    elif lang == "c":
+        return c_handler.execute(code)
+    elif lang == "c++":
+        return cpp_handler.execute(code)
+    elif lang == "java":
+        return java_handler.execute(code)
+    else:
+        print("[ERROR] Unsupported language.")
+        return None
+
+def generate_output(format, code, output, metadata):
+    fmt = format.lower()
+    if fmt == "txt":
+        txt_formatter.generate(code, output, metadata)
+    elif fmt == "latex":
+        latex_formatter.generate(code, output, metadata)
+    elif fmt == "docx":
+        docx_formatter.generate(code, output, metadata)
+    else:
+        print("[ERROR] Unsupported output format.")
+
+def interactive_mode():
+    metadata = load_metadata(CONFIG_PATH)
+    if metadata is None:
+        return
+
+    metadata["experiment_number"] = input("Experiment number: ")
     language = input("Programming Language (Python/C/C++/Java): ").strip()
     print("Enter your code (end with a single line containing only 'END'):")
     code_lines = []
@@ -26,48 +67,37 @@ def get_user_input():
             break
         code_lines.append(line)
     code = "\n".join(code_lines)
-
     output_format = input("Output format (txt/latex/docx): ").strip()
 
-    # Return only if all required fields are filled
-    if not (language and code and output_format and metadata):
-        return None, None, None, None
+    output = execute_code(language, code)
+    if output is not None:
+        generate_output(output_format, code, output, metadata)
 
-    return language, code, metadata, output_format
+def main():
+    args = get_cli_args(CONFIG_PATH)
 
-
-def run():
-    language, code, metadata, output_format = get_user_input()
-
-    if not all([language, code, metadata, output_format]):
-        print("[ERROR] Missing input. Exiting.")
+    if args.interactive:
+        interactive_mode()
         return
 
-    # Code Language support
-    lang = language.lower() # type: ignore
-    if lang == "python":
-        output = python_handler.execute(code)
-    elif lang == "c":
-        output = c_handler.execute(code)
-    elif lang == "c++":
-        output = cpp_handler.execute(code)
-    elif lang == "java":
-        output = java_handler.execute(code)
-    else:
-        print("Unsupported language")
+    # Non-interactive mode requires all these
+    if not (args.language and args.code_file and args.format):
+        print("[ERROR] Missing required arguments. Use --help for usage.")
         return
 
-    # Code Output Formatters
-    fmt = output_format.lower() # type: ignore
-    if fmt == "txt":
-        txt_formatter.generate(code, output, metadata)
-    elif fmt == "latex":
-        latex_formatter.generate(code, output, metadata) # type: ignore
-    elif fmt == "docx":
-        docx_formatter.generate(code, output, metadata)
-    else:
-        print("Unsupported format")
+    metadata = load_metadata(args.input)
+    if metadata is None:
+        return
 
+    metadata["experiment_number"] = input("Experiment number: ")
+
+    code = read_code_from_file(args.code_file)
+    if code is None:
+        return
+
+    output = execute_code(args.language, code)
+    if output is not None:
+        generate_output(args.format, code, output, metadata)
 
 if __name__ == '__main__':
-    run()
+    main()
